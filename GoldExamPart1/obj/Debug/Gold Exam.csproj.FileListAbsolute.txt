@@ -1,0 +1,8 @@
+\\Mac\Home\Desktop\GitHub\CrestronGold\Gold Exam\Gold Exam\bin\Debug\Gold Exam.dll
+\\Mac\Home\Desktop\GitHub\CrestronGold\Gold Exam\Gold Exam\bin\Debug\Gold Exam.pdb
+\\Mac\Home\Desktop\GitHub\CrestronGold\Gold Exam\Gold Exam\bin\Debug\Newtonsoft.Json.Compact.dll
+\\Mac\Home\Desktop\GitHub\CrestronGold\Gold Exam\Gold Exam\bin\Debug\SimplSharpCustomAttributesInterface.dll
+\\Mac\Home\Desktop\GitHub\CrestronGold\Gold Exam\Gold Exam\bin\Debug\SimplSharpHelperInterface.dll
+\\Mac\Home\Desktop\GitHub\CrestronGold\Gold Exam\Gold Exam\obj\Debug\ResolveAssemblyReference.cache
+\\Mac\Home\Desktop\GitHub\CrestronGold\Gold Exam\Gold Exam\obj\Debug\Gold Exam.dll
+\\Mac\Home\Desktop\GitHub\CrestronGold\Gold Exam\Gold Exam\obj\Debug\Gold Exam.pdb
