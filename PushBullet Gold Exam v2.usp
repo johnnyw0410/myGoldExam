@@ -1,0 +1,136 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+  (Fill in comments below)
+*******************************************************************************************/
+/*
+Dealer Name: Mac
+System Name: Gold Exam
+Programmer:	JW
+Comments:
+*/
+
+#HELP_BEGIN
+   
+DIGITAL IMPUT   Connect     	Trigger to connect the pushbullet live stream web socket server
+DIGITAL INPUT   Disconnect  	Trigger to disconnect from the pushbullet live stream web socket server
+DIGITAL INPUT   SetUser     	Trigger to send the user API token set in 'USER_TOKEN' to pushbullet server
+DIGITAL INPUT   GetMail     	Trigger to get the email information associate with the user token
+DIGITAL INPUT   GetPush     	Trigger to manually poll the latest push notice from pushbullet server
+DIGITAL INPUT   SendPush    	Trigger to send a message with title specified in the 'SendMessage' and 'Title' field
+SERIAL  INPUT   USER_TOKEN  	Set the user API token value. It's used to confirm user identity
+SERIAL  INPUT   SendMessage 	Set the content of the notice to send to pushbullet server
+SERIAL  INPUT   Title       	Set the title of the notice to send to pushbullet server
+
+
+DIGITAL OUTPUT  EventTriggered	Listener of the pushbullet live stream web socket. High for 0.5 sec when there is a new push notice.
+DIGITAL OUTPUT  WSSConnected	Show connection status to the pushbullet live stream web socket server
+SERIAL  OUTPUT  myEmail        	Email information return when 'GetMail' is triggered.
+SERIAL  OUTPUT  myMessage$		Push notice content return from a push event from user.
+SERIAL  OUTPUT  StatusLog1$		Various print commands for debugging purposes
+SERIAL  OUTPUT  StatusLog2$		Various print commands for debugging purposes
+
+
+#HELP_END
+
+
+
+
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+#USER_SIMPLSHARP_LIBRARY "PushBulletClassV1.05"
+
+DIGITAL_INPUT Connect, Disconnect, SetUser, GetEMAIL, GetPush; 
+DIGITAL_INPUT SendPush;
+DIGITAL_OUTPUT EventTriggered;
+DIGITAL_OUTPUT WSSConnected;
+STRING_INPUT USER_TOKEN[80];
+STRING_INPUT SendMessage[100];
+STRING_INPUT Title[30];
+STRING_OUTPUT myEmail,myMessage$,statusLog$,statusLog2$;
+//STRING_OUTPUT Message_Received;
+
+PBClass MyPushBullet;
+
+Function Init()
+{
+ 	RegisterEvent(MyPushBullet,onReceivePush,onReceivePushEvent);
+}                             
+
+eventhandler onReceivePushEvent(PBClass sender, EventArgs args)
+{
+	
+
+	Pulse(50, EventTriggered);
+	
+	MyPushBullet.GetPush();
+
+	myMessage$= MyPushBullet.PushReceived;
+	StatusLog$= MyPushBullet.PrintString;
+	statusLog2$= MyPushBullet.PrintString2;
+
+
+}
+
+
+PUSH SetUser
+{
+	MyPushBullet.SetToken(USER_TOKEN);
+	StatusLog$= MyPushBullet.PrintString;
+}
+
+PUSH Connect
+{
+    MyPushBullet.Connect();
+	StatusLog$= MyPushBullet.PrintString;
+	statuslog2$ = MyPushBullet.PrintString2;
+	
+	If(MyPushBullet.PrintString = "Connection Success!") WSSConnected = 1;
+	Else WSSConnected = 0;	
+
+}
+
+PUSH DISCONNECT
+{
+	
+    MyPushBullet.Disconnect();
+	StatusLog$= MyPushBullet.PrintString;
+	WSSConnected = 0;
+
+}
+
+PUSH GetEmail
+{
+	MyPushBullet.GetUserEmail();
+
+	myEmail=MyPushBullet.User_Email;
+	StatusLog$= MyPushBullet.PrintString;
+	statusLog2$= MyPushBullet.PrintString2;
+
+
+}
+
+PUSH GetPush
+
+{
+	MyPushBullet.GetPush();
+
+	myMessage$= MyPushBullet.PushReceived;
+	StatusLog$= MyPushBullet.PrintString;
+	statusLog2$= MyPushBullet.PrintString2;
+
+}
+
+PUSH SendPush
+{
+	string myJsonMsg[200];
+   	myJsonMsg=MyPushBullet.createNote(myEmail,Title,SendMessage);
+	MyPushBullet.SendPush(myJsonMsg);
+}
+      
+
+Function Main()
+{
+
+	init();
+}
